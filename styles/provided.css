@@ -1,9 +1,11 @@
 
 /* base styles, feel free to edit */
+
+
 html, body {
     margin: 0;
     padding: 0;
-    background-color: #fafafa;
+    background-color: white;
     height: 100%;
     font-family: -apple-system, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
@@ -45,4 +47,9 @@ footer {
     list-style-type: none;
 }
 
-/* Add your styles here */
+
+.post-box{
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid #333;
+}

@@ -6,7 +6,7 @@
     <title>Quickpic</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- You can add your styles and scripts here -->
-    <link rel="stylesheet" type="text/css" media="screen" href="styles/provided.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="styles/provided.css"/>
     <script type="module" src="src/helpers.js"></script>
     <script type="module" src="src/api.js"></script>
 </head>
@@ -20,11 +20,46 @@
         </ul>
     </header>
     <main role="main">
-        <!-- app goes here --> 
+        <div id = "error_out" style="z-index: 9;height: 10px+auto; top : 120px;
+            left: 40px; width: 200px;background-color: yellow;position: absolute;  display:none;">       
+        </div>
+
+        <div id = 'loginscreen' style = 'background-color: aqua;z-index: 0; width:auto'>
+            <h2>please enter the login details</h2>
+            Username:<input type="text" id = 'log_username' /> <br/>
+            Password:<input type="password" id = 'log_password' /> <br/>
+            Password confirm:<input type="password" id = 'log_password_confirm' /> <br/>
+        
+
+            <button id = 'log_button'>login</button>
+            <button id = 'regist_button'>Regist</button>
+
+            
+
+        </div>
+        <div id = 'registscreen' style = 'background-color: aqua;z-index: 0;width:auto;display: none;'>
+            Username:<input type="text" id = 'regist_username' /> <br/>
+            Password:<input type="password" id = 'regist_password' /> <br/>
+            Password confirm:<input type="password" id = 'regist_password_confirm' /> <br/>
+            E-mail:<input type="text" id = 'regist_email' /> <br/>
+            Name:<input type="text" id = 'regist_name' /> <br/>
+            <button id = 'regist_submit'>regist submit</button>
+        </div>
+
+        <div id = 'dashboardscreen' style="background-color: aqua;z-index: 0;width:auto;display: none;">
+            <h2>Welcome!</h2>
+            <div id = 'my_token' style="display: none;"></div>
+            <div id = 'posts_list'></div>
+
+
+        </div>
+
     </main>
     <footer>
         <p>&copy; Quickpic</p>
     </footer>
     <script type="module" src="src/main.js"></script>
 </body>
+
 </html>
+ 
