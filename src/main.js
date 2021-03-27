@@ -249,7 +249,7 @@ function unshow_feed(){
 
 function load_user_page(username){
 
-
+    clear_div('posts_list');
     document.getElementById('back_the_main_fead').style.display = 'block';
 
 
@@ -616,13 +616,19 @@ document.getElementById('new_post_button').addEventListener('click', () => {
 });
 
 const post_details = (post,mother_div) =>{
+
     // for each post detail;
     let posteach = document.createElement('div');
+    posteach.id = `${post.id}posteach`;
     posteach.className = 'post-box';
+    document.getElementById(mother_div).appendChild(posteach);
+
 
     //grab the author
     const feed_author = document.createElement('div');
     feed_author.innerText= `By ${post.meta.author}`;
+    feed_author.id = `${post.id}feed_author`;
+
     feed_author.className = 'click_name';
     posteach.appendChild(feed_author);
     feed_author.onclick =function(){
@@ -633,6 +639,7 @@ const post_details = (post,mother_div) =>{
     };
     //time
     const feed_time = document.createElement('div');
+    
     feed_time.className='dateposition';
     //let timestamp3 = new Date(post.meta.published);
     let timestamp3 =new Date(parseInt(post.meta.published)*1000+ 8 * 3600 * 1000).toJSON().substr(0, 19).replace('T', ' ' );
@@ -670,15 +677,16 @@ const post_details = (post,mother_div) =>{
 
         Edit_button.onclick = function () {
             if (Edit_button.value == 'Edit the post'){
-                posteach.removeChild(feed_author);
                 
-                posteach.removeChild(feed_time);
-                posteach.removeChild(upper_part);
+                feed_author.style.display = 'none';
+                feed_time.style.display = 'none';
+                upper_part.style.display = 'none';
+                lower_part.style.display = 'none';
+              
 
-                posteach.removeChild(lower_part);
-                posteach.appendChild(document.
-                    createTextNode('you are able to change your post word content now\n'));
+                
                 new_content = document.createElement('textarea');
+                new_content.placeholder='you are able to change your post word content now\n';
                 new_content.style.width = '100%';
                 new_content.style.height = '40px';
                 posteach.appendChild(new_content);
@@ -701,8 +709,17 @@ const post_details = (post,mother_div) =>{
                     .then((data) => {
                         console.log('Success:', data);
                         if(data.status == 200){
-                            adderror('successful edit!');
-                            load_user_page(global_user_name);
+                            alert('successful edit!');
+                            document.getElementById(`${post.id}middle_part`).innerText = new_content.value;
+                            feed_author.style.display = 'block';
+                            feed_time.style.display = 'block';
+                            upper_part.style.display = 'block';
+                            lower_part.style.display = 'block';
+                        
+
+                            posteach.removeChild(new_content);
+                            
+                            Edit_button.value = 'Edit the post';
                         } else if (data.status == 400) {
                             adderror('the image is incorrect!');
                         }
@@ -732,7 +749,7 @@ const post_details = (post,mother_div) =>{
                 console.log('Success:', data);
                 if(data.status == 200){
                     adderror('successful delete!');
-                    load_user_page(global_user_name);
+                    document.getElementById(mother_div).removeChild(posteach);
 
                 } else if (data.status == 400) {
                     adderror('the image is incorrect!');
@@ -747,6 +764,9 @@ const post_details = (post,mother_div) =>{
     const commet_part = document.createElement('div');
     const upper_part = document.createElement('div');
     const middle_part = document.createElement('div');
+    commet_part.id = `${post.id}commet_part`;
+    middle_part.id = `${post.id}middle_part`;
+
     
 
     posteach.appendChild(upper_part);
@@ -780,6 +800,7 @@ const post_details = (post,mother_div) =>{
     like_button.style.backgroundColor = 'red';
 
     like_button.className='bottom_style';
+    like_button.id = `${post.id}like_button`;
 
     upper_part.appendChild(like_button);
 
@@ -793,41 +814,18 @@ const post_details = (post,mother_div) =>{
     who_like_button.value = `Likes:     ${N_like}` ;
     who_like_button.className='bottom_style';
     who_like_button.style.backgroundColor='red';
-      
+    who_like_button.id = `${post.id}who_like_button`;
     who_like_button.style.border='1px solid #333';
-
-
     
     lower_part.appendChild(who_like_button);
-    const wholike = document.createElement('div');
+    let wholike = document.createElement('div');
+    wholike.id = `${post.id}wholike`;
     like_part.appendChild(wholike);
     wholike.style.display = 'none';
 
-    // load who like this comment
-    const id_list = post.meta.likes;
-    let i;
-    for (i = 0; i < id_list.length; i++) {
-        check_person_detail('id',`${id_list[i]}`)
-        .then(result=>{
-            const who_like_name = document.createElement('div');
-            who_like_name.innerText =result.username+ '👍';
-            who_like_name.className='click_name';
-            wholike.appendChild(who_like_name);
-            who_like_name.onclick =function(){
-                document.getElementById('dashboardscreen').style.display='none';
-                document.getElementById('userscreen').style.display='block';
-                load_user_page(`${result.username}`);
-                console.log('check');
-
-            };
-            if (result.username == document.getElementById('log_username').value
-            ||result.username == document.getElementById('regist_username').value
-            ){
-                like_button.value = '   Unlike  👍  ';
-                like_button.style.backgroundColor = 'grey';
-            }
-        });
-    };
+    like_namelist(post,`${post.id}wholike`);
+    
+    const wholike1 = document.getElementById(`${post.id}wholike`);
 
     // set like buttom and who like buttom rules
     like_button.onclick = function () {
@@ -847,6 +845,8 @@ const post_details = (post,mother_div) =>{
                 like_button.style.backgroundColor = 'red';
                 N_like =N_like- 1;
                 who_like_button.value = `Likes:     ${N_like}`
+                clear_div(wholike.id);
+                like_namelist(post,wholike.id)
             }
         });
         } else {
@@ -864,17 +864,18 @@ const post_details = (post,mother_div) =>{
                     like_button.value = '   Unlike  👍  ';
                     like_button.style.backgroundColor = 'grey';
                     N_like =N_like + 1;
-
+                    clear_div(wholike.id);
+                    like_namelist(post,wholike.id)
                     who_like_button.value = `Likes:     ${N_like}`
                 }
             });
         }
     };
     who_like_button.onclick = function () {
-        if (wholike.style.display == 'block') {
-            wholike.style.display = 'none';
+        if (wholike1.style.display == 'block') {
+            wholike1.style.display = 'none';
         } else {
-            wholike.style.display = 'block';
+            wholike1.style.display = 'block';
         }
     };
     /////////////////////////////
@@ -894,8 +895,9 @@ const post_details = (post,mother_div) =>{
 
     var N_comment = (post.comments).length;
     let show_comment_button = document.createElement('input');
+    show_comment_button.id = `${post.id}show_comment_button`;
     show_comment_button.type = 'button';
-    show_comment_button.value = `  📬 (show) Comment: ${N_comment}  ` ;
+    show_comment_button.value = `  📬 (show) Comment: ${N_comment}  `;
     show_comment_button.className='bottom_style';
     
       
@@ -907,28 +909,9 @@ const post_details = (post,mother_div) =>{
     lower_part.appendChild(show_comment_button);
 
 
+    comment_content(post,commet_part.id);
+    const commet_part_1 = document.getElementById(commet_part.id);
 
-    // comment content
-
-    for (i = 0; i < post.comments.length; i++) {
-        const comment_used = document.createElement('div');
-        comment_used.style.color = 'black';
-        comment_used.style.fontSize = '10px';
-        const auth = post.comments[i.toString()].author;
-        let timestamp3 =new Date(parseInt(post.comments[i.toString()].published)*1000+ 8 * 3600 * 1000).toJSON().substr(0, 19).replace('T', ' ' );
-        const who_commet_name = document.createElement('div');
-        who_commet_name.innerText =`${auth}: `;
-        who_commet_name.className = 'click_name'
-        commet_part.appendChild(who_commet_name);
-        comment_used.innerText =  `${post.comments[i.toString()].comment} (${timestamp3} )` ;
-        commet_part.appendChild(comment_used);
-        who_commet_name.onclick =function(){
-            document.getElementById('dashboardscreen').style.display='none';
-            document.getElementById('userscreen').style.display='block';
-            console.log('check');
-            load_user_page(`${auth}`);
-        };
-    }
 
     
     const comment_text= document.createElement('input');
@@ -941,15 +924,15 @@ const post_details = (post,mother_div) =>{
     comment_button.style.float='right';
     comment_button.style.marginLeft='5px';
     comment_text.className = 'input_comment';
-    commet_part.style.display = 'None'
+    commet_part_1.style.display = 'None'
 
     show_comment_button.onclick = function () {
-        if (commet_part.style.display == 'block') {
-            commet_part.style.display = 'none';
+        if (commet_part_1.style.display == 'block') {
+            commet_part_1.style.display = 'none';
             show_comment_button.value = `  📬 (show) Comment: ${N_comment}  ` ;
 
         } else {
-            commet_part.style.display = 'block';
+            commet_part_1.style.display = 'block';
             show_comment_button.value = `  📬 (Unshow) Comment: ${N_comment}  ` ;
         }
     }
@@ -977,13 +960,110 @@ const post_details = (post,mother_div) =>{
                 N_comment = N_comment + 1;
                 adderror('successful post');
                 comment_text.value = '';
-                clear_div('posts_list');
-                clear_div('posts_list');
-                show_feed();
+                clear_div(commet_part.id);
+                comment_content(post,commet_part.id)
             } else if (data.status == 400) {
                 adderror("you haven't input anything.");
             }
         });
     };
-    document.getElementById(mother_div).appendChild(posteach);
+}
+
+function fetch_one_post(id,type){
+    let url = 'http://localhost:5000/post?id='+id
+    return fetch(url,{
+        method: type,
+        headers:{
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + document.cookie.split('=')[1],
+        },
+    })
+    .then((data) => {
+        console.log('Success:', data);
+        if(data.status == 200){
+            return data.json();
+
+        } else if (data.status == 403) {
+            adderror('The token is incorrect');
+        }
+    });
+}
+
+
+
+
+
+
+
+function comment_content(oldpost,id){
+    fetch_one_post(oldpost.id,'GET')
+    .then(post=>{
+        var N_comment = (post.comments).length;
+        const commet_part_1 = document.getElementById(id);
+        const show_comment_button = document.getElementById(`${oldpost.id}show_comment_button`);
+
+        if (commet_part_1.style.display != 'block') {
+            show_comment_button.value = `  📬 (show) Comment: ${N_comment}  ` ;
+
+        } else {
+            show_comment_button.value = `  📬 (Unshow) Comment: ${N_comment}  ` ;
+        }
+
+        for (var i = 0; i < post.comments.length; i++) {
+            const comment_used = document.createElement('div');
+            comment_used.style.color = 'black';
+            comment_used.style.fontSize = '10px';
+            const auth = post.comments[i.toString()].author;
+            let timestamp3 =new Date(parseInt(post.comments[i.toString()].published)*1000+ 8 * 3600 * 1000).toJSON().substr(0, 19).replace('T', ' ' );
+            const who_commet_name = document.createElement('div');
+            who_commet_name.innerText =`${auth}: `;
+            who_commet_name.className = 'click_name'
+            document.getElementById(id).appendChild(who_commet_name);
+            comment_used.innerText =  `${post.comments[i.toString()].comment} (${timestamp3} )` ;
+            document.getElementById(id).appendChild(comment_used);
+            who_commet_name.onclick =function(){
+                document.getElementById('dashboardscreen').style.display='none';
+                document.getElementById('userscreen').style.display='block';
+                console.log('check');
+                load_user_page(`${auth}`);
+            };
+        }
+    });
+}
+
+
+function like_namelist(oldpost,id){
+    fetch_one_post(oldpost.id,'GET')
+    .then(post=>{
+        // load who like this comment
+        const id_list = post.meta.likes;
+        let i;
+        for (i = 0; i < id_list.length; i++) {
+            check_person_detail('id',`${id_list[i]}`)
+            .then(result=>{
+                const who_like_name = document.createElement('div');
+                who_like_name.innerText =result.username+ '👍';
+                who_like_name.className='click_name';
+                document.getElementById(id).appendChild(who_like_name);
+                who_like_name.onclick =function(){
+                    document.getElementById('dashboardscreen').style.display='none';
+                    document.getElementById('userscreen').style.display='block';
+                    load_user_page(`${result.username}`);
+                    console.log('check');
+
+                };
+                if (result.username == document.getElementById('log_username').value
+                ||result.username == document.getElementById('regist_username').value
+                ){ 
+                    const like_button = document.getElementById(`${post.id}like_button`);
+                    like_button.value = '   Unlike  👍  ';
+                    like_button.style.backgroundColor = 'grey';
+                    var N_like = (post.meta.likes).length;
+                    let who_like_button = document.getElementById(`${post.id}who_like_button`);
+                    who_like_button.value = `Likes:     ${N_like}` ;
+                }
+            });
+        };
+});
 }
