@@ -14,6 +14,8 @@ html, body {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
+    width: 80%;
+    margin: auto;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
@@ -46,10 +48,170 @@ footer {
     display: inline;
     list-style-type: none;
 }
+.bottom_style{
+    border: none;
+    background: #404040;
+    color: #ffffff;
+    font-weight:bold;
+    padding: 10px;
+    text-transform: uppercase;
+    border-radius: 6px;
+
+}
+.bottom_style:hover{
+    background: white;
+    color: black;
+    border: 1px solid black;
+
+}
 
 
 .post-box{
     padding: 10px;
-    margin: 10px;
-    border: 1px solid #333;
+    margin: auto;
+    border: 1px solid black;
+    line-height:normal;
+    width: 90%;
+    background-color: white;
+    padding-bottom: 2em;
+    height:max-content;
+    margin-top: 3em;
+
+}
+.click_name{
+    border: none;
+    color: rgba(14, 171, 199, 0.897);
+    font-weight:bold;
+    border-radius: 6px;
+}
+
+.click_name:hover{
+    background: white;
+    color: black;
+    border: 5px solid black;
+}
+.post_text{
+    padding-top: 1em;
+    margin-top: 1em;
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+
+    text-align: center;
+    border-bottom: 1px solid  grey;
+    border-top: 1px solid grey;
+    margin-left:0 auto;
+    margin-right:0 auto;
+    
+
+}    
+.center{
+    
+    margin: auto;
+}
+.dateposition{
+    font-family: Arial;
+    color: gray;
+    font-size: 10px;
+    font-weight: bold;
+    float: right;
+}
+.comment_text{
+    
+    color: black;
+    font-size: 15px;
+    font-weight: bold;
+    width: 60%;
+    margin: 0 auto;
+    border-bottom: 1px solid  grey;
+    border-top: 1px solid grey;
+
+
+}
+.error_pop{
+    width: 400px;
+    height: 200px;
+    border: 2px solid black;
+    margin: 0 auto;
+    position: absolute;
+    left: 50%;
+    margin-left: -200px;
+    top: 50%;
+    margin-top: -100px;
+    background-color: yellow;
+    font-size: large;
+    z-index: 9;
+    
+}
+
+.input_comment{
+    
+    float:right;
+    height:2em;
+}
+
+
+.center_style{
+    width: 90%;
+    margin: auto;
+}
+.image{
+    width: 60%;
+    margin:0 auto;
+}
+
+@media only screen and (min-width: 900px){
+
+    /* .post-box{
+        padding: 10px;
+        margin: auto;
+        border: 1px solid #333;
+        line-height:normal;
+        width: 50%;
+        background-color: white;
+        padding-bottom: 2em;
+        height:max-content;
+        margin-top: 3em;
+    
+    } */
+    .center_style{
+        width: 80%;
+    }
+
+    .click_name{
+        font-size:100%;
+
+    }
+    .dateposition{
+        font-size:90%;
+    }
+    .input_comment{
+        width: 260px;
+        height: 2em;
+        font-size: large;
+    }
+    .bottom_style{
+        font-size: 100%;
+        padding: 10px;
+
+    }
+
+    .image{
+        width: 40%;
+    }
+}
+
+@media only screen and (max-width: 550px){
+
+    .bottom_style{
+        font-size: 60%;
+        padding: 5px;
+
+    }
+
+    .input_comment{
+        width: 120px;
+        height: 1.5em;
+        font-size: smaller;
+    }
+
 }
