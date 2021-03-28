@@ -19,17 +19,33 @@ let global_my_token = undefined;
 let global_user_name = undefined;
 let global_user_id = undefined;
 
+////////////////////////////////
+//      function used for clear mother div
+/////////////////////////
+const clear_div=(div_mother)=>{
+    var father_div1 = document.getElementById(div_mother);
 
+    while(father_div1.firstChild) {
+        father_div1.removeChild(father_div1.firstChild);
 
-
+    }
+};
+////////////////////////////////////
+//
+//  record cookie and update login
+//
+///////////////////////////////////
 if(document.cookie){
     global_my_token = document.cookie.split('=')[1];
     console.log(global_my_token);
     show_feed();
+    check_person_detail('me','me')
+    .then((find_user)=>{
+        global_user_id = find_user.id;
+        global_user_name = find_user.username;
+    });
 
 }
-
-
 
 ////////////////////////////////////////////////////
 //
@@ -39,27 +55,28 @@ if(document.cookie){
 function adderror (text) {
 
     const curDiv = document.getElementById('error_out');
+    let button = document.createElement('input');
+    button.type = 'button';
+    button.value = '❌';
+
+    curDiv.appendChild(button);
+    button.style.float = 'right';
 
 
     const newContent = document.createElement('div');
+    newContent.id = 'error_pop_out_text';
     newContent.innerText = text;
     newContent.className = 'error-box';
+    newContent.style.width = '100%';
+    newContent.style.margin = '0 auto';
+
+
 
     curDiv.appendChild(newContent);
     curDiv.style.display = "";
 
-
-    let button = document.createElement('input');
-    button.type = 'button';
-    button.value = 'Close';
-    curDiv.appendChild(button);
-    button.style.float = 'right';
-    
-
-
     button.onclick = function () {
-        curDiv.removeChild(newContent);
-        curDiv.removeChild(button);
+        clear_div('error_out');
         curDiv.style.display = "none";
     };
 }
@@ -94,6 +111,8 @@ document.getElementById('log_button').addEventListener('click', () => {
                 data.json().then(result=>{
                     document.cookie = 'Token='+result.token+'';
                     global_my_token = result.token
+                    global_user_name = document.getElementById('log_username').value;
+
                     clear_div('posts_list');
                     show_feed();
                 });
@@ -154,6 +173,7 @@ document.getElementById('regist_submit').addEventListener('click', () => {
                 data.json().then(result=>{
                     document.cookie = 'Token='+result.token+'';
                     global_my_token = result.token;
+                    global_user_name = document.getElementById('regist_username').value;
                     clear_div('posts_list');
                     show_feed();
                 });
@@ -211,22 +231,27 @@ function loadfeed (start,end){
 };
 
 function show_feed(){
-    
+
     document.getElementById('dashboardscreen').style.display = 'block';
     document.getElementById('loginscreen').style.display = 'none';
     document.getElementById('my_post_parts').style.display = 'block';
     document.getElementById('userscreen').style.display = 'none';
     document.getElementById('registscreen').style.display = 'none';
+    document.getElementById('back_to_my_page').style.display = 'block';
+    //////////////////////////////
+    //
+    //  infinite scroll
+    //
+    ///////////////////////////////////
     loadfeed(0,10);
-    
     var start = 10;
     window.onscroll = ()=>{
-        if((window.scrollY+window.innerHeight)>= 0.95*document.body.scrollHeight){
+        if((window.scrollY+window.innerHeight)>= 0.95*document.body.scrollHeight
+        && document.getElementById('dashboardscreen').style.display != 'none'){
             loadfeed(start,1);
             start = start +1;
         }
     }
-
 }
 
 function unshow_feed(){
@@ -236,6 +261,8 @@ function unshow_feed(){
     document.getElementById('my_post_parts').style.display = 'none';
     document.getElementById('userscreen').style.display = 'none';
     document.getElementById('registscreen').style.display = 'none';
+    document.getElementById('back_to_my_page').style.display = 'none';
+    document.getElementById('back_the_main_fead').style.display = 'none';
 }
 
 ////////////////////////////////////////////////////
@@ -243,24 +270,23 @@ function unshow_feed(){
 //      fucntion for loading personal page
 ///////////////////////////////////////////////////////
 
-
-
-
-
-function load_user_page(username){
+function load_user_page(username,type){
 
     clear_div('posts_list');
     document.getElementById('back_the_main_fead').style.display = 'block';
-
-
     clear_div('find_username_post');
     clear_div('who_following');
 
     console.log(username);
-    check_person_detail('username',username)
+    check_person_detail(type,username)
     .then((find_user)=>{
         console.log(find_user);
         load_personal_following_list(find_user.following);
+        ////////////////////////////////////
+        //
+        //  partly update person basic info
+        //
+        //////////////////////////////////////
 
         document.getElementById('user_id').innerText = find_user.id;
         document.getElementById('user_Username').innerText = find_user.username;
@@ -270,12 +296,12 @@ function load_user_page(username){
         document.getElementById('user_Fans').innerText = find_user.followed_num;
 
         check_if_inmy_following(find_user.id);
-
-
-
-
         const user_post = find_user.posts;
-
+        ////////////////////////////////////
+        //
+        //  partly update person post
+        //
+        //////////////////////////////////////
         let i;
         for (i = 0; i < user_post.length; i++) {
             const result = fetch(`http://localhost:5000/post?id=${user_post[i]}`,{
@@ -422,7 +448,7 @@ document.getElementById('update_details_button').addEventListener('click', () =>
         console.log('Success:', data);
         if(data.status == 200){
 
-            load_user_page(global_user_name);
+            load_user_page(global_user_name,'username');
             document.getElementById('update_details').style.display='none';
             document.getElementById('userscreen').style.display='block';
 
@@ -445,7 +471,7 @@ document.getElementById('update_details_button').addEventListener('click', () =>
 function check_person_detail(type,text){
     let url;
     if (type == 'me'){
-        url = 'http://localhost:5000/';
+        url = 'http://localhost:5000/user';
     } else {
         url = 'http://localhost:5000/user?'+type+'='+text;
     }
@@ -471,17 +497,7 @@ function check_person_detail(type,text){
 
 
 }
-////////////////////////////////
-//      function used for clear mother div
-/////////////////////////
-const clear_div=(div_mother)=>{
-    var father_div1 = document.getElementById(div_mother);
 
-    while(father_div1.firstChild) {
-        father_div1.removeChild(father_div1.firstChild);
-
-    }
-};
 //////////////////////////////////////////////////////////////////////////////////
 //      load personal following list
 //////////////////////////////////////////////////////////////////////////////////
@@ -501,14 +517,13 @@ const load_personal_following_list=(user_Following)=>{
             name.onclick =function(){
                 document.getElementById('dashboardscreen').style.display='none';
                 document.getElementById('userscreen').style.display='block';
-                load_user_page(result.username);
+                load_user_page(result.username,'username');
 
                 console.log('check');
 
             };
 
-            if (result.username == document.getElementById('log_username').value
-            ||result.username == document.getElementById('regist_username').value
+            if (result.username == global_user_name
             ){
                 follow_button.value = 'Unfollow';
             }
@@ -564,20 +579,45 @@ function check_if_inmy_following(id){
     });
 
 }
-
-
+////////////////////////////////////////////////////
+//
+//      fucntion for backing main home feed
+//
+///////////////////////////////////////////////////////
 document.getElementById('back_the_main_fead').addEventListener('click', () => {
+    document.getElementById('back_the_main_fead').style.display = 'none';
+
     clear_div('posts_list');
     show_feed();
 });
-
+////////////////////////////////////////////////////
+//
+//      fucntion for logout
+//
+///////////////////////////////////////////////////////
 document.getElementById('log_out_button').addEventListener('click', () => {
     unshow_feed();
     document.cookie = "Token=; expires = Thu, 01 Jan 2020 00:00:00 UTC";
     console.log(document.cookie);
 
 });
+////////////////////////////////////////////////////
+//
+//      fucntion for backing home page
+//
+///////////////////////////////////////////////////////
+document.getElementById('back_to_my_page').addEventListener('click', () => {
+    clear_div('posts_list');
 
+    load_user_page(global_user_name,'username');
+    document.getElementById('userscreen').style.display='block';
+    document.getElementById('dashboardscreen').style.display='none';
+});
+////////////////////////////////////////////////////
+//
+//      fucntion for posting 
+//
+///////////////////////////////////////////////////////
 document.getElementById('new_post_button').addEventListener('click', () => {
     const file = document.getElementById('photo_upload').files[0];
     fileToDataUrl(file)
@@ -615,6 +655,118 @@ document.getElementById('new_post_button').addEventListener('click', () => {
     });
 });
 
+//////////////////////////////////////////////////////
+//
+//  function for fetching each post
+//
+//////////////////////////////////////////////////////
+
+function fetch_one_post(id,type){
+    let url = 'http://localhost:5000/post?id='+id
+    return fetch(url,{
+        method: type,
+        headers:{
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + document.cookie.split('=')[1],
+        },
+    })
+    .then((data) => {
+        console.log('Success:', data);
+        if(data.status == 200){
+            return data.json();
+
+        } else if (data.status == 403) {
+            adderror('The token is incorrect');
+        }
+    });
+}
+
+//////////////////////////////////////////////////////
+//
+//  function for creating comment part
+//
+//////////////////////////////////////////////////////
+function comment_content(oldpost,id){
+    fetch_one_post(oldpost.id,'GET')
+    .then(post=>{
+        var N_comment = (post.comments).length;
+        const commet_part_1 = document.getElementById(id);
+        const show_comment_button = document.getElementById(`${oldpost.id}show_comment_button`);
+
+        if (commet_part_1.style.display != 'block') {
+            show_comment_button.value = `  📬 (show) Comment: ${N_comment}  ` ;
+
+        } else {
+            show_comment_button.value = `  📬 (Unshow) Comment: ${N_comment}  ` ;
+        }
+
+        for (var i = 0; i < post.comments.length; i++) {
+            const comment_used = document.createElement('div');
+            comment_used.style.color = 'black';
+            comment_used.style.fontSize = '10px';
+            const auth = post.comments[i.toString()].author;
+            let timestamp3 =new Date(parseInt(post.comments[i.toString()].published)*1000+ 8 * 3600 * 1000).toJSON().substr(0, 19).replace('T', ' ' );
+            const who_commet_name = document.createElement('div');
+            who_commet_name.innerText =`${auth}: `;
+            who_commet_name.className = 'click_name'
+            document.getElementById(id).appendChild(who_commet_name);
+            comment_used.innerText =  `${post.comments[i.toString()].comment} (${timestamp3} )` ;
+            document.getElementById(id).appendChild(comment_used);
+            who_commet_name.onclick =function(){
+                document.getElementById('dashboardscreen').style.display='none';
+                document.getElementById('userscreen').style.display='block';
+                console.log('check');
+                load_user_page(`${auth}`,'username');
+            };
+        }
+    });
+}
+//////////////////////////////////////////////////////
+//
+//  function for creating like name list_parts
+//
+//////////////////////////////////////////////////////
+function like_namelist(oldpost,id){
+    fetch_one_post(oldpost.id,'GET')
+    .then(post=>{
+        // load who like this comment
+        const id_list = post.meta.likes;
+        let i;
+        for (i = 0; i < id_list.length; i++) {
+            check_person_detail('id',`${id_list[i]}`)
+            .then(result=>{
+                const who_like_name = document.createElement('div');
+                who_like_name.innerText =result.username+ '👍';
+                who_like_name.className='click_name';
+                document.getElementById(id).appendChild(who_like_name);
+                who_like_name.onclick =function(){
+                    document.getElementById('dashboardscreen').style.display='none';
+                    document.getElementById('userscreen').style.display='block';
+                    load_user_page(`${result.username}`,'username');
+                    console.log('check');
+
+                };
+                if (result.username == global_user_name ){
+                    const like_button = document.getElementById(`${post.id}like_button`);
+                    like_button.value = ' Unlike  👍';
+                    like_button.style.backgroundColor = 'grey';
+                    var N_like = (post.meta.likes).length;
+                    let who_like_button = document.getElementById(`${post.id}who_like_button`);
+                    who_like_button.value = `Likes:     ${N_like}` ;
+                }
+            });
+        };
+});
+}
+
+
+
+////////////////////////////////////////////////////
+//
+//      fucntion for showing each single post
+//
+///////////////////////////////////////////////////////
 const post_details = (post,mother_div) =>{
 
     // for each post detail;
@@ -635,17 +787,15 @@ const post_details = (post,mother_div) =>{
         document.getElementById('dashboardscreen').style.display='none';
         document.getElementById('userscreen').style.display='block';
         console.log('check');
-        load_user_page(`${post.meta.author}`);
+        load_user_page(`${post.meta.author}`,'username');
     };
     //time
     const feed_time = document.createElement('div');
-    
     feed_time.className='dateposition';
     //let timestamp3 = new Date(post.meta.published);
     let timestamp3 =new Date(parseInt(post.meta.published)*1000+ 8 * 3600 * 1000).toJSON().substr(0, 19).replace('T', ' ' );
     feed_time.innerText= `${timestamp3}`;
     posteach.appendChild(feed_time);
-    
     //image
     const feed_imag = document.createElement('img');
     feed_imag.setAttribute('src',`data:image/jpeg;base64,${post.thumbnail}`);
@@ -653,12 +803,13 @@ const post_details = (post,mother_div) =>{
     feed_imag.style.margin = 'auto';
     const feed_imag_part = document.createElement('div');
     feed_imag_part.appendChild(feed_imag);
-    /* feed_imag_part.style.width='60%';
-    feed_imag_part.style.margin='auto'; */
     feed_imag_part.className = 'image';
-
     posteach.appendChild(feed_imag_part);
-    //////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////
+    //
+    //      fucntion for edit part
+    //
+    ///////////////////////////////////////////////////////
     console.log(post.meta.author);
     console.log(global_user_name);
 
@@ -677,14 +828,11 @@ const post_details = (post,mother_div) =>{
 
         Edit_button.onclick = function () {
             if (Edit_button.value == 'Edit the post'){
-                
                 feed_author.style.display = 'none';
                 feed_time.style.display = 'none';
                 upper_part.style.display = 'none';
                 lower_part.style.display = 'none';
-              
 
-                
                 new_content = document.createElement('textarea');
                 new_content.placeholder='you are able to change your post word content now\n';
                 new_content.style.width = '100%';
@@ -709,16 +857,16 @@ const post_details = (post,mother_div) =>{
                     .then((data) => {
                         console.log('Success:', data);
                         if(data.status == 200){
-                            alert('successful edit!');
+                            adderror('successful edit!');
                             document.getElementById(`${post.id}middle_part`).innerText = new_content.value;
                             feed_author.style.display = 'block';
                             feed_time.style.display = 'block';
                             upper_part.style.display = 'block';
                             lower_part.style.display = 'block';
-                        
+
 
                             posteach.removeChild(new_content);
-                            
+
                             Edit_button.value = 'Edit the post';
                         } else if (data.status == 400) {
                             adderror('the image is incorrect!');
@@ -730,6 +878,11 @@ const post_details = (post,mother_div) =>{
             }
 
         }
+        ////////////////////////////////////////////////////
+        //
+        //      fucntion for deleting post
+        //
+        ///////////////////////////////////////////////////////
         let Delete_button = document.createElement('input');
         Delete_button.type = 'button';
         Delete_button.value = 'Delete the post';
@@ -760,14 +913,11 @@ const post_details = (post,mother_div) =>{
 
     // set the comment part and like part
     const like_part = document.createElement('div');
-
     const commet_part = document.createElement('div');
     const upper_part = document.createElement('div');
     const middle_part = document.createElement('div');
     commet_part.id = `${post.id}commet_part`;
     middle_part.id = `${post.id}middle_part`;
-
-    
 
     posteach.appendChild(upper_part);
     posteach.appendChild(middle_part);
@@ -775,14 +925,11 @@ const post_details = (post,mother_div) =>{
     middle_part.className='post_text';
     middle_part.style.width='100%';
     //grab the text
-
     middle_part.innerText= post.meta.description_text + '\n';
     middle_part.className = 'post_text';
     const lower_part = document.createElement('div');
     posteach.appendChild(lower_part);
     lower_part.style.width='100%';
-
-    //middle_part.style.width='80%';
 
 
 
@@ -798,12 +945,9 @@ const post_details = (post,mother_div) =>{
     like_button.type = 'button';
     like_button.value = '   Like  👍  ';
     like_button.style.backgroundColor = 'red';
-
     like_button.className='bottom_style';
     like_button.id = `${post.id}like_button`;
-
     upper_part.appendChild(like_button);
-
     lower_part.appendChild(like_part);
 
 
@@ -826,10 +970,13 @@ const post_details = (post,mother_div) =>{
     like_namelist(post,`${post.id}wholike`);
     
     const wholike1 = document.getElementById(`${post.id}wholike`);
-
-    // set like buttom and who like buttom rules
+    ////////////////////////////////////////////////////
+    //
+    // fucntion used for like and unlike
+    //
+    ////////////////////////////////////////////////////
     like_button.onclick = function () {
-        if (like_button.value == '   Unlike  👍  '){
+        if (like_button.value == ' Unlike  👍'){
             const result = fetch(`http://localhost:5000/post/unlike?id=${post.id}`,{
             method:'PUT',
             headers:{
@@ -861,7 +1008,7 @@ const post_details = (post,mother_div) =>{
             })
             .then((data) => {
                 if(data.status == 200){
-                    like_button.value = '   Unlike  👍  ';
+                    like_button.value = ' Unlike  👍';
                     like_button.style.backgroundColor = 'grey';
                     N_like =N_like + 1;
                     clear_div(wholike.id);
@@ -899,21 +1046,17 @@ const post_details = (post,mother_div) =>{
     show_comment_button.type = 'button';
     show_comment_button.value = `  📬 (show) Comment: ${N_comment}  `;
     show_comment_button.className='bottom_style';
-    
-      
     show_comment_button.style.border='1px solid #333';
     show_comment_button.style.float = 'right';
-
-
-    
     lower_part.appendChild(show_comment_button);
 
-
+    ////////////////////////////////////////////////////
+    //
+    // fucntion used for adding comment for each post
+    //
+    ////////////////////////////////////////////////////
     comment_content(post,commet_part.id);
     const commet_part_1 = document.getElementById(commet_part.id);
-
-
-    
     const comment_text= document.createElement('input');
     comment_text.type = 'text';
     comment_text.placeholder="Leave your comment here!"
@@ -937,7 +1080,11 @@ const post_details = (post,mother_div) =>{
         }
     }
 
-
+    ////////////////////////////////////////////////////
+    //
+    // fucntion used upload comment and live showing
+    //
+    ////////////////////////////////////////////////////
 
 
     comment_button.onclick = function () {
@@ -969,101 +1116,3 @@ const post_details = (post,mother_div) =>{
     };
 }
 
-function fetch_one_post(id,type){
-    let url = 'http://localhost:5000/post?id='+id
-    return fetch(url,{
-        method: type,
-        headers:{
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'Token ' + document.cookie.split('=')[1],
-        },
-    })
-    .then((data) => {
-        console.log('Success:', data);
-        if(data.status == 200){
-            return data.json();
-
-        } else if (data.status == 403) {
-            adderror('The token is incorrect');
-        }
-    });
-}
-
-
-
-
-
-
-
-function comment_content(oldpost,id){
-    fetch_one_post(oldpost.id,'GET')
-    .then(post=>{
-        var N_comment = (post.comments).length;
-        const commet_part_1 = document.getElementById(id);
-        const show_comment_button = document.getElementById(`${oldpost.id}show_comment_button`);
-
-        if (commet_part_1.style.display != 'block') {
-            show_comment_button.value = `  📬 (show) Comment: ${N_comment}  ` ;
-
-        } else {
-            show_comment_button.value = `  📬 (Unshow) Comment: ${N_comment}  ` ;
-        }
-
-        for (var i = 0; i < post.comments.length; i++) {
-            const comment_used = document.createElement('div');
-            comment_used.style.color = 'black';
-            comment_used.style.fontSize = '10px';
-            const auth = post.comments[i.toString()].author;
-            let timestamp3 =new Date(parseInt(post.comments[i.toString()].published)*1000+ 8 * 3600 * 1000).toJSON().substr(0, 19).replace('T', ' ' );
-            const who_commet_name = document.createElement('div');
-            who_commet_name.innerText =`${auth}: `;
-            who_commet_name.className = 'click_name'
-            document.getElementById(id).appendChild(who_commet_name);
-            comment_used.innerText =  `${post.comments[i.toString()].comment} (${timestamp3} )` ;
-            document.getElementById(id).appendChild(comment_used);
-            who_commet_name.onclick =function(){
-                document.getElementById('dashboardscreen').style.display='none';
-                document.getElementById('userscreen').style.display='block';
-                console.log('check');
-                load_user_page(`${auth}`);
-            };
-        }
-    });
-}
-
-
-function like_namelist(oldpost,id){
-    fetch_one_post(oldpost.id,'GET')
-    .then(post=>{
-        // load who like this comment
-        const id_list = post.meta.likes;
-        let i;
-        for (i = 0; i < id_list.length; i++) {
-            check_person_detail('id',`${id_list[i]}`)
-            .then(result=>{
-                const who_like_name = document.createElement('div');
-                who_like_name.innerText =result.username+ '👍';
-                who_like_name.className='click_name';
-                document.getElementById(id).appendChild(who_like_name);
-                who_like_name.onclick =function(){
-                    document.getElementById('dashboardscreen').style.display='none';
-                    document.getElementById('userscreen').style.display='block';
-                    load_user_page(`${result.username}`);
-                    console.log('check');
-
-                };
-                if (result.username == document.getElementById('log_username').value
-                ||result.username == document.getElementById('regist_username').value
-                ){ 
-                    const like_button = document.getElementById(`${post.id}like_button`);
-                    like_button.value = '   Unlike  👍  ';
-                    like_button.style.backgroundColor = 'grey';
-                    var N_like = (post.meta.likes).length;
-                    let who_like_button = document.getElementById(`${post.id}who_like_button`);
-                    who_like_button.value = `Likes:     ${N_like}` ;
-                }
-            });
-        };
-});
-}
