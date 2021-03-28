@@ -61,7 +61,7 @@ footer {
 .bottom_style:hover{
     background: white;
     color: black;
-    border: 1px solid black;
+
 
 }
 
@@ -127,7 +127,7 @@ footer {
 
 
 }
-.error_pop{
+/* .error_pop{
     width: 400px;
     height: 200px;
     border: 2px solid black;
@@ -141,6 +141,27 @@ footer {
     font-size: large;
     z-index: 9;
     
+} */
+
+.error_pop{
+    border: 2px solid black;
+
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    background-color: darkgrey;
+    font-weight:bold;
+    padding: 10px;
+    text-transform: uppercase;
+    border-radius: 6px;
+    text-align: center;
+    z-index: 100;
+    font-size: large;
+    color: #ffffff;
+    height: 100px;
+    margin-top: -50px;
+    width: 300px;
+    margin-left: -150px;
 }
 
 .input_comment{
@@ -157,6 +178,13 @@ footer {
 .image{
     width: 60%;
     margin:0 auto;
+}
+.userdetial{
+    border: 1px solid #333; 
+    padding: 10px; 
+    margin: 10px;
+    background-color: white;
+    width:fit-content;
 }
 
 @media only screen and (min-width: 900px){
@@ -207,9 +235,13 @@ footer {
         padding: 5px;
 
     }
+    .userdetial{
+        width: 80%;
+        font-size: small;
+    }
 
     .input_comment{
-        width: 120px;
+        width: 80px;
         height: 1.5em;
         font-size: smaller;
     }
