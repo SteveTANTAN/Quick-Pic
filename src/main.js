@@ -238,10 +238,10 @@ function show_feed(){
     document.getElementById('userscreen').style.display = 'none';
     document.getElementById('registscreen').style.display = 'none';
     document.getElementById('back_to_my_page').style.display = 'block';
+    document.getElementById('log_out_button').style.display = 'block';
+
     //////////////////////////////
-    //
     //  infinite scroll
-    //
     ///////////////////////////////////
     loadfeed(0,10);
     var start = 10;
@@ -255,7 +255,6 @@ function show_feed(){
 }
 
 function unshow_feed(){
-
     document.getElementById('dashboardscreen').style.display = 'none';
     document.getElementById('loginscreen').style.display = 'block';
     document.getElementById('my_post_parts').style.display = 'none';
@@ -263,6 +262,8 @@ function unshow_feed(){
     document.getElementById('registscreen').style.display = 'none';
     document.getElementById('back_to_my_page').style.display = 'none';
     document.getElementById('back_the_main_fead').style.display = 'none';
+    document.getElementById('log_out_button').style.display = 'none';
+
 }
 
 ////////////////////////////////////////////////////
@@ -272,16 +273,15 @@ function unshow_feed(){
 
 function load_user_page(username,type){
 
-    clear_div('posts_list');
-    document.getElementById('back_the_main_fead').style.display = 'block';
-    clear_div('find_username_post');
-    clear_div('who_following');
-
     console.log(username);
     check_person_detail(type,username)
     .then((find_user)=>{
         console.log(find_user);
         load_personal_following_list(find_user.following);
+        clear_div('posts_list');
+        document.getElementById('back_the_main_fead').style.display = 'block';
+        clear_div('find_username_post');
+        clear_div('who_following');
         ////////////////////////////////////
         //
         //  partly update person basic info
@@ -360,7 +360,7 @@ function load_user_page(username,type){
         console.log(check_user_name);
 
         if (follow_buttom.value == 'Follow') {
-            const result = fetch(`http://localhost:5000/user/follow?username=${check_user_name}`,{
+            const result = fetch(`http://localhost:5000/user/follow?username=${document.getElementById('user_Username').innerText}`,{
                 method:'PUT',
                 headers:{
                     'Accept': 'application/json',
@@ -372,6 +372,7 @@ function load_user_page(username,type){
                 console.log('Success:', data);
                 if(data.status == 200){
                     adderror('successful following')
+                    document.getElementById('user_Fans').innerText = document.getElementById('user_Fans').innerText*1+1;
                     document.getElementById('follow_buttom').value= 'Unfollow';
 
 
@@ -385,7 +386,7 @@ function load_user_page(username,type){
 
 
         } else if (follow_buttom.value == 'Unfollow'){
-            const result = fetch(`http://localhost:5000/user/unfollow?username=${check_user_name}`,{
+            const result = fetch(`http://localhost:5000/user/unfollow?username=${document.getElementById('user_Username').innerText}`,{
 
                 method:'PUT',
                 headers:{
@@ -398,6 +399,8 @@ function load_user_page(username,type){
                 console.log('Success:', data);
                 if(data.status == 200){
                     adderror('successful Unfollowing')
+                    document.getElementById('user_Fans').innerText -= 1;
+
                     document.getElementById('follow_buttom').value= 'Follow';
 
 
@@ -457,9 +460,6 @@ document.getElementById('update_details_button').addEventListener('click', () =>
             adderror('You cannot follow youself!');
         }
     });
-
-
-
     document.getElementById('update_details').style.display='none';
     document.getElementById('userscreen').style.display='block';
 });
@@ -492,10 +492,10 @@ function check_person_detail(type,text){
 
         } else if (data.status == 403) {
             adderror('The token is incorrect');
+        } else if (data.status == 404) {
+            adderror('User not found, please check your input');
         }
     });
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -557,7 +557,8 @@ function check_if_inmy_following(id){
                     document.getElementById('find_username').innerText = 'Please check your personal page.';
 
                 }else{
-                    document.getElementById('find_username').innerText = 'Please check '+document.getElementById('user_Username').innerText+"'s personal page.";
+                    document.getElementById('find_username').innerText = 'Please check '
+                    +document.getElementById('user_Username').innerText+"'s personal page.";
                     if (result.following.includes(id)) {
                         document.getElementById('follow_buttom').value= 'Unfollow';
                         console.log('this people has been follow');
@@ -615,7 +616,24 @@ document.getElementById('back_to_my_page').addEventListener('click', () => {
 });
 ////////////////////////////////////////////////////
 //
-//      fucntion for posting 
+//      Search a person
+//
+///////////////////////////////////////////////////////
+document.getElementById('search_button').addEventListener('click', () => {
+    clear_div('posts_list');
+
+    load_user_page(document.getElementById('search_user').value
+    ,document.getElementById('search_type').value);
+    document.getElementById('userscreen').style.display='block';
+    document.getElementById('dashboardscreen').style.display='none';
+});
+
+
+
+
+////////////////////////////////////////////////////
+//
+//      fucntion for posting
 //
 ///////////////////////////////////////////////////////
 document.getElementById('new_post_button').addEventListener('click', () => {
