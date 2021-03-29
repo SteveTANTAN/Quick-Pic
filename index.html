@@ -5,8 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Quickpic</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- You can add your styles and scripts here -->
     <link rel="stylesheet" type="text/css" media="screen" href="styles/provided.css"/>
     <script type="module" src="src/helpers.js"></script>
     <script type="module" src="src/api.js"></script>
@@ -16,17 +14,24 @@
     <header class="banner"class='center_style'>
         <h1>Quickpic</h1>
         <ul class="nav">
-            <li class="nav-item">Item</li>
-            <li class="nav-item">Item</li>
+        <!-- Showing the top header -->
+            Find a person HERE!：<input id = 'search_user' type="text" placeholder="input users' username or id"></input>
+            <select id="search_type" value="username">
+                <option value="username">username</option>
+                <option value="id">id</option>
+            </select>
+            <button id='search_button' class="bottom_style">    🔍    </button>
         </ul>
-        <button id='log_out_button'class='bottom_style'>log out</button>
+        <button id='log_out_button'class='bottom_style' style="display: none;">log out</button>
     </header>
     <main role="main" class="center_style">
+        <!-- Showing the error pop -->
+
         <div id = "error_out" style="display: none;" class="error_pop">
         </div>
 
-
-        <div id = 'loginscreen' style = 'background-color:aqua;z-index: 0; width:70%;margin: auto;'>
+        <!-- Showing the login screen -->
+        <div id = 'loginscreen' class = 'loginscreen_style'>
             <h2>please enter the login details</h2>
             Username:<input type="text" id = 'log_username' /> <br/>
             Password:<input type="password" id = 'log_password' /> <br/>
@@ -36,8 +41,8 @@
             <button id = 'log_button'class='bottom_style'>login</button>
             <button id = 'regist_button'class='bottom_style' style="right: 2em;">Regist</button>
         </div>
-
-        <div id = 'registscreen' style = 'background-color: aqua;z-index: 0;width:auto;display: none;'>
+        <!-- Showing the register -->
+        <div id = 'registscreen' class = 'registscreen_style'>
             Username:<input type="text" id = 'regist_username' /> <br/>
             Password:<input type="password" id = 'regist_password' /> <br/>
             Password confirm:<input type="password" id = 'regist_password_confirm' /> <br/>
@@ -45,8 +50,8 @@
             Name:<input type="text" id = 'regist_name' /> <br/>
             <button id = 'regist_submit'class='bottom_style'>regist submit</button>
         </div>
-
-        <div id='my_post_parts' style="border-bottom: 2px solid #000; border-top: 2px solid #000;margin-top: 2em; display: none;">
+        <!-- Showing the edit my post part -->
+        <div id='my_post_parts' class="post_parts_style">
             <h2>Post part</h2>
             <div>Notice：You are able to make a new post always on the top.😘</div>
             <div class="center_style">
@@ -54,20 +59,24 @@
                 <h4>Content:</h4>
                 <textarea type="input" id = 'input_content' style="width: 70%; height: 150px;" ></textarea></br>
 
-                <label for="photo_upload">Choose a profile picture:(only for Png file)</label></br>
+                <label for="photo_upload">Choose a profile picture:(only for image file)</label></br>
 
                 <input type="file"
                     id="photo_upload" name="photo_upload"
-                    accept="image/png,image/jpg"class='bottom_style'>
+                    accept="image/png,image/jpg,image/jpeg"class='bottom_style'>
 
 
                 <h2><button id="new_post_button"class='bottom_style'>Post</button></h2>
-        
             </div>
         </div>
+        <!-- Showing the all the feeds i had -->
         <div id = 'all_feed_parts' class="center_style" style="background-color: aqua;">
-            <button id='back_to_my_page'class='bottom_style' style="float: right;display: none;">My Home page🏡</button>
-            <button id = 'back_the_main_fead' class='bottom_style' style="display: none;"> ◀ Back to the main Feed </button>
+            <button id='back_to_my_page'class='bottom_style' style="float: right;display: none;">
+                My Home page🏡
+            </button>
+            <button id = 'back_the_main_fead' class='bottom_style' style="display: none;">
+                ◀ Back to the main Feed
+            </button>
             <div id = 'dashboardscreen' style="z-index: 0;margin:auto;display: none;">
                 <h2>Welcome!</h2>
 
@@ -75,31 +84,37 @@
 
 
             </div>
-
-            <div id = 'userscreen' style="background-color: aqua;z-index: 0;display: none;height:100%;">
+            <!-- Showing the the user details and his/her posts -->
+            <div id = 'userscreen' class="userscreen_style">
 
                 <h2><div id = 'find_username' style="display: '';width: 100%;"></div></h2>
                 <div id = 'find_username_detail' class="userdetial">
                     <table>
                         <tr>
-                            <th><div>ID:</div></th>  <td><div id = "user_id"></div></td></br>
+                            <th id='poeple_id'><div>ID:</div></th>
+                            <td><div id = "user_id"></div></td></br>
                         </tr>
                         <tr>
-                            <th><div>Username:</div></th>  <td><div id = "user_Username"></div></td>
+                            <th id='poeple_Username'><div>Username:</div></th>
+                            <td><div id = "user_Username"></div></td>
                         </tr>
                         <tr>
-                            <th><div>Email:</div></th>  <td><div id = "user_Email"></div></td>
+                            <th id='poeple_Email'><div>Email:</div></th>
+                            <td><div id = "user_Email"></div></td>
 
                         </tr>
                         <tr>
-                            <th><div>Name:</div></th>  <td><div id = "user_Name"></div></td>
+                            <th id='poeple_Name'><div>Name:</div></th>
+                            <td><div id = "user_Name"></div></td>
                         </tr>
                         <tr>
-                            <th><div>Following:</div></th>  <td><div id = "user_Following"></div></td>
+                            <th id='poeple_Following'><div>Following:</div></th>
+                            <td><div id = "user_Following"></div></td>
 
                         </tr>
                         <tr>
-                            <th><div>Fans:</div></th>  <td><div id = "user_Fans"></div></td>
+                            <th id='poeple_Fans'><div>Fans:</div></th>
+                            <td><div id = "user_Fans"></div></td>
                         </tr>
                     </table>
 
@@ -107,8 +122,9 @@
                     <input id = 'who_follow_button' type="button"class='bottom_style'></input>
                     <div id = "who_following"class='bottom_style' style="display: none;"> </div>
                 </div>
-                <div id = 'find_username_post' style="border: 1px solid #333; padding: 10px; margin: 10px;background-color: white;"></div>
+                <div id = 'find_username_post' class="user_post_style"></div>
             </div>
+            <!-- Showing the update my details -->
             <div id = 'update_details' style="display: none;font-size: x-large;">
                 Name: <input id = 'update_Name' type="text"></input></br>
 
