@@ -239,6 +239,8 @@ function show_feed(){
     document.getElementById('registscreen').style.display = 'none';
     document.getElementById('back_to_my_page').style.display = 'block';
     document.getElementById('log_out_button').style.display = 'block';
+    document.getElementById('search_part').style.display = 'block';
+
 
     //////////////////////////////
     //  infinite scroll
@@ -263,6 +265,7 @@ function unshow_feed(){
     document.getElementById('back_to_my_page').style.display = 'none';
     document.getElementById('back_the_main_fead').style.display = 'none';
     document.getElementById('log_out_button').style.display = 'none';
+    document.getElementById('search_part').style.display = 'none';
 
 }
 
