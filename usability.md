@@ -1,4 +1,3 @@
-TODO!
 
 - search button on the header of page: used for checking one user details and show its post. you are able to follow a new person here.
 
