@@ -127,21 +127,7 @@ footer {
 
 
 }
-/* .error_pop{
-    width: 400px;
-    height: 200px;
-    border: 2px solid black;
-    margin: 0 auto;
-    position: absolute;
-    left: 50%;
-    margin-left: -200px;
-    top: 50%;
-    margin-top: -100px;
-    background-color: yellow;
-    font-size: large;
-    z-index: 9;
-    
-} */
+
 
 .error_pop{
     border: 2px solid black;
@@ -189,22 +175,40 @@ footer {
 
 @media only screen and (min-width: 900px){
 
-    /* .post-box{
-        padding: 10px;
-        margin: auto;
-        border: 1px solid #333;
-        line-height:normal;
-        width: 50%;
-        background-color: white;
-        padding-bottom: 2em;
-        height:max-content;
-        margin-top: 3em;
-    
-    } */
+
     .center_style{
         width: 80%;
     }
-
+    .loginscreen_style{
+        background-color:aqua;
+        z-index: 0; 
+        width:70%;
+        margin: auto;
+    }
+    .registscreen_style{
+        background-color: aqua;
+        z-index: 0;
+        width:auto;
+        display: none;
+    }
+    .post_parts_style{
+        border-bottom: 2px solid #000; 
+        border-top: 2px solid #000;
+        margin-top: 2em; 
+        display: none;
+    }
+    .user_post_style{
+        border: 1px solid #333; 
+        padding: 10px; 
+        margin: 10px;
+        background-color: white;
+    }
+    .userscreen_style{
+        background-color: aqua;
+        z-index: 0;
+        display: none;
+        height:100%;
+    }
     .click_name{
         font-size:100%;
 
