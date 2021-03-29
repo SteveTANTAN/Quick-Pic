@@ -1,4 +1,3 @@
-
 - search button on the header of page: used for checking one user details and show its post. you are able to follow a new person here.
 
 
@@ -26,9 +25,9 @@ after checkout your personal page
 click back button then check out all the other people's post
 
 in each post, you can 
-  1. click like and unlike button used for un/likr
+  1. click like and unlike button used for un/like
   2. leave a comment then click comment button for commenting a post
-  3. click like:3 button showed who liked this post
+  3. click (like:3) button showed who liked this post
   4. click show comment checkout all the comment of this post
 
 after you doing the actions above all the thing will be update
