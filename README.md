@@ -9,6 +9,15 @@
 7. Submission
 8. Late Submission Policy
 
+ The Support (Backend) - no work required
+
+The backend server is not part of your repository (due to it's size). However, we have put it on a publically accessible repo (so only one copy, rather than separate repos deployed to every student).
+
+<a href="https://gitlab.cse.unsw.edu.au/COMP6080/21T1/ass2-backend">You can access the backend repository here</a>. Clone this repository onto your working machine. 
+
+`git clone gitlab@gitlab.cse.unsw.edu.au:COMP6080/21T1/ass2-backend backend`
+
+Once cloned, you can view the `README.md` in new repository to see how to get the server running.
 ## 0. Change Log
 
 Coming Soon
